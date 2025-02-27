@@ -4,36 +4,58 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload File</title>
+    <!-- Tambahkan Tailwind CSS -->
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100 flex items-center justify-center h-screen">
     <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
         <h1 class="text-2xl font-bold mb-6 text-center">Upload File</h1>
         <form ref="uploadForm" id="uploadForm" action="/upload" method="post" encType="multipart/form-data" class="space-y-4">
-            <div>
-                <input type="file" name="file" class="w-full p-2 border border-gray-300 rounded-lg" />
-            </div>
-            <div>
-                <input type="submit" value="Upload File" name="submit" class="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 cursor-pointer" />
-            </div>
+            <input type="file" name="file" class="w-full p-2 border border-gray-300 rounded-lg" />
+            <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition duration-200">
+                <span id="submitText">Upload File</span>
+                <span id="loadingSpinner" class="hidden">Loading...</span>
+            </button>
         </form>
         <div id="result" class="mt-6 text-center"></div>
     </div>
 
     <script>
-        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+        document.getElementById('uploadForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const formData = new FormData(e.target);
-            const response = await fetch('/upload', {
+
+            // Tampilkan loading state
+            document.getElementById('submitText').classList.add('hidden');
+            document.getElementById('loadingSpinner').classList.remove('hidden');
+
+            // Kirim form data menggunakan Fetch API
+            const formData = new FormData(this);
+            fetch('/upload', {
                 method: 'POST',
                 body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                // Sembunyikan loading state
+                document.getElementById('submitText').classList.remove('hidden');
+                document.getElementById('loadingSpinner').classList.add('hidden');
+
+                // Tampilkan URL file yang diunggah
+                if (data.url) {
+                    document.getElementById('result').innerHTML = `
+                        <p class="text-green-600">File uploaded successfully!</p>
+                        <a href="${data.url}" target="_blank" class="text-blue-500 underline">${data.url}</a>
+                    `;
+                } else {
+                    document.getElementById('result').innerHTML = `<p class="text-red-600">Upload failed. Please try again.</p>`;
+                }
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                document.getElementById('submitText').classList.remove('hidden');
+                document.getElementById('loadingSpinner').classList.add('hidden');
+                document.getElementById('result').innerHTML = `<p class="text-red-600">Upload failed. Please try again.</p>`;
             });
-            const result = await response.json();
-            if (result.url) {
-                document.getElementById('result').innerHTML = `File uploaded successfully: <a href="${result.url}" class="text-blue-500 underline" target="_blank">${result.url}</a>`;
-            } else {
-                document.getElementById('result').innerHTML = 'Upload failed.';
-            }
         });
     </script>
 </body>
