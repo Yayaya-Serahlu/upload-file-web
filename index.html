@@ -36,6 +36,7 @@
         <div id="result" class="mt-4 p-4 bg-gray-200 rounded hidden">
             <h2 class="text-lg font-semibold mb-2">Result:</h2>
             <pre id="resultContent"></pre>
+            <button id="copyButton" class="mt-2 bg-gray-400 hover:bg-gray-500 text-white py-1 px-2 rounded">Copy URL</button>
         </div>
     </div>
 
@@ -45,6 +46,7 @@
         const resultDiv = document.getElementById('result');
         const resultContent = document.getElementById('resultContent');
         const submitButton = document.getElementById('submitButton');
+        const copyButton = document.getElementById('copyButton');
 
         form.addEventListener('submit', async (e) => {
             e.preventDefault();
@@ -67,6 +69,22 @@
             } finally {
                 loading.classList.add('hidden');
                 submitButton.disabled = false;
+            }
+        });
+
+        copyButton.addEventListener('click', () => {
+            const data = JSON.parse(resultContent.textContent);
+            if (data && data.url) {
+                navigator.clipboard.writeText(data.url)
+                    .then(() => {
+                        alert('URL copied to clipboard!');
+                    })
+                    .catch(err => {
+                        console.error('Could not copy text: ', err);
+                        alert('Could not copy URL.');
+                    });
+            } else {
+                alert('No URL found in the result.');
             }
         });
     </script>
