@@ -24,11 +24,9 @@
                 Memuat...
             </div>
             <div id="result" class="hidden mt-4">
-                <label for="resultText" class="block text-sm font-medium text-gray-700">Hasil Unggahan:</label>
-                <div class="mt-1">
-                    <textarea id="resultText" rows="3" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border-gray-300 rounded-md" readonly></textarea>
-                </div>
-                <button id="copyButton" class="mt-2 bg-gray-300 text-gray-700 py-1 px-2 rounded hover:bg-gray-400">Salin</button>
+                <label for="resultDisplay" class="block text-sm font-medium text-gray-700">Hasil Unggahan:</label>
+                <div id="resultDisplay" class="mt-1 p-4 border rounded-md bg-gray-50">
+                    </div>
             </div>
         </form>
     </div>
@@ -38,8 +36,7 @@
         const submitButton = document.getElementById('submitButton');
         const loading = document.getElementById('loading');
         const result = document.getElementById('result');
-        const resultText = document.getElementById('resultText');
-        const copyButton = document.getElementById('copyButton');
+        const resultDisplay = document.getElementById('resultDisplay');
 
         uploadForm.addEventListener('submit', (event) => {
             loading.classList.remove('hidden');
@@ -50,14 +47,8 @@
                 loading.classList.add('hidden');
                 submitButton.disabled = false;
                 result.classList.remove('hidden');
-                resultText.value = "https://contoh.com/file-yang-diunggah.txt"; // Ganti dengan URL hasil unggahan
+                resultDisplay.innerHTML = "<p>File berhasil diunggah!</p><p>Nama file: contoh_file.txt</p><p>Ukuran: 10 KB</p>"; // Ganti dengan hasil unggahan sebenarnya
             }, 2000);
-        });
-
-        copyButton.addEventListener('click', () => {
-            resultText.select();
-            document.execCommand('copy');
-            alert('Teks disalin!');
         });
     </script>
 </body>
