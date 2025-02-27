@@ -6,66 +6,49 @@
     <title>Upload File</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 h-screen flex items-center justify-center">
-    <div class="bg-white p-8 rounded shadow-md w-96">
-        <h1 class="text-2xl font-semibold mb-4 text-center">Unggah File</h1>
-        <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
-            <div class="mb-4">
-                <input type="file" name="file" id="fileInput" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-500 file:text-white hover:file:bg-indigo-700" />
-            </div>
-            <div class="mb-4">
-                <button type="submit" id="submitButton" class="w-full bg-indigo-500 text-white py-2 px-4 rounded hover:bg-indigo-700">Unggah File</button>
-            </div>
-            <div id="loading" class="hidden text-center">
-                <svg class="animate-spin h-5 w-5 mr-3 ..." viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                </svg>
-                Memuat...
-            </div>
-            <div id="result" class="hidden mt-4">
-                <label for="resultDisplay" class="block text-sm font-medium text-gray-700">Hasil:</label>
-                <div id="resultDisplay" class="mt-1 p-4 border rounded-md bg-gray-50">
-                    </div>
-            </div>
+<body class="bg-gray-100">
+    <div class="container mx-auto p-8">
+        <h1 class="text-3xl font-bold mb-4">Upload File</h1>
+        <form ref="uploadForm" id="uploadForm" action="/upload" method="post" enctype="multipart/form-data" class="mb-4">
+            <input type="file" name="file" class="mb-2 p-2 border rounded" />
+            <button type="submit" name="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Upload File</button>
         </form>
+        <div id="loading" class="hidden items-center justify-center mb-4">
+            <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
+            <span class="ml-2">Uploading...</span>
+        </div>
+        <div id="result" class="mt-4 p-4 border rounded">
+            <p id="resultText">Hasil akan muncul di sini...</p>
+        </div>
     </div>
 
     <script>
         const uploadForm = document.getElementById('uploadForm');
-        const submitButton = document.getElementById('submitButton');
-        const loading = document.getElementById('loading');
-        const result = document.getElementById('result');
-        const resultDisplay = document.getElementById('resultDisplay');
+        const loadingDiv = document.getElementById('loading');
+        const resultDiv = document.getElementById('result');
+        const resultText = document.getElementById('resultText');
 
-        uploadForm.addEventListener('submit', async (event) => {
-            event.preventDefault(); // Mencegah pengiriman formulir standar
-            loading.classList.remove('hidden');
-            submitButton.disabled = true;
+        uploadForm.addEventListener('submit', (event) => {
+            loadingDiv.classList.remove('hidden');
+            resultDiv.classList.add('hidden');
 
             const formData = new FormData(uploadForm);
 
-            try {
-                const response = await fetch('/upload', {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                if (response.ok) {
-                    const data = await response.text(); // Mengambil hasil res.send sebagai teks
-                    resultDisplay.innerHTML = `<p>${data}</p>`; // Menampilkan hasil di resultDisplay
-                    result.classList.remove('hidden');
-                } else {
-                    resultDisplay.innerHTML = `<p>Terjadi kesalahan: ${response.statusText}</p>`;
-                    result.classList.remove('hidden');
-                }
-            } catch (error) {
-                resultDisplay.innerHTML = `<p>Terjadi kesalahan: ${error.message}</p>`;
-                result.classList.remove('hidden');
-            } finally {
-                loading.classList.add('hidden');
-                submitButton.disabled = false;
-            }
+            fetch('/upload', {
+                method: 'POST',
+                body: formData,
+            })
+            .then(response => response.text()) // Mengambil response sebagai teks
+            .then(data => {
+                loadingDiv.classList.add('hidden');
+                resultDiv.classList.remove('hidden');
+                resultText.textContent = data; // Menampilkan hasil dari res.send
+            })
+            .catch(error => {
+                loadingDiv.classList.add('hidden');
+                resultDiv.classList.remove('hidden');
+                resultText.textContent = 'Terjadi kesalahan: ' + error;
+            });
         });
     </script>
 </body>
