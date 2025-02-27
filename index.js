@@ -12,8 +12,8 @@ const c = 'p'
 const to = '_bxqsHOyZgmjEDH'
 const ken = 'bQCGmhgGLQakGpFM09ap42'
 const githubToken = `${a}${b}${c}${to}${ken}`; // https://github.com/settings/tokens
-const owner = 'Rapikzduar'; // GitHub username
-const repo = 'aplot-pel'; // Repository name
+const owner = 'Yayaya-Serahlu'; // GitHub username
+const repo = 'uploadfile'; // Repository name
 const branch = 'main';
 
 app.use(fileUpload());
@@ -45,7 +45,7 @@ app.post('/upload', async (req, res) => {
       },
     });
 
-    let rawUrl = `https://uploadfile-rapikz-yeah.vercel.app/${filePath}`;
+    let rawUrl = `https://aplotpelrapikzyeah.vercel.app/${filePath}`;
     res.send(`${rawUrl}`);
   } catch (error) {
     console.error(error);
