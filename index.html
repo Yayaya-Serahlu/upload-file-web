@@ -1,98 +1,40 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload File</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
-
-<body class="bg-gray-100 h-screen flex items-center justify-center">
-    <div class="bg-white p-8 rounded shadow-md w-96">
-        <h1 class="text-2xl font-semibold mb-4 text-center">Upload File</h1>
-        <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
-            <div class="mb-4">
-                <input type="file" name="file" id="fileInput" class="block w-full text-sm text-slate-500
-                    file:mr-4 file:py-2 file:px-4
-                    file:rounded-full file:border-0
-                    file:text-sm file:font-semibold
-                    file:bg-blue-500 file:text-white
-                    hover:file:bg-blue-700" />
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
+        <h1 class="text-2xl font-bold mb-6 text-center">Upload File</h1>
+        <form ref="uploadForm" id="uploadForm" action="/upload" method="post" encType="multipart/form-data" class="space-y-4">
+            <div>
+                <input type="file" name="file" class="w-full p-2 border border-gray-300 rounded-lg" />
             </div>
-            <button type="submit" id="submitButton"
-                class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-700">Upload File</button>
-            <div id="loading" class="hidden mt-2 text-center">
-                <svg class="animate-spin h-5 w-5 mr-3 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none"
-                    viewBox="0 0 24 24">
-                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                    <path class="opacity-75" fill="currentColor"
-                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
-                    </path>
-                </svg>
-                Loading...
+            <div>
+                <input type="submit" value="Upload File" name="submit" class="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 cursor-pointer" />
             </div>
         </form>
-        <div id="result" class="mt-4 p-4 bg-gray-200 rounded hidden">
-            <h2 class="text-lg font-semibold mb-2">Result:</h2>
-            <div id="resultContent" class="break-all"></div>
-            <button id="copyButton" class="mt-2 bg-gray-400 hover:bg-gray-500 text-white py-1 px-2 rounded">Copy URL</button>
-        </div>
+        <div id="result" class="mt-6 text-center"></div>
     </div>
 
     <script>
-        const form = document.getElementById('uploadForm');
-        const loading = document.getElementById('loading');
-        const resultDiv = document.getElementById('result');
-        const resultContent = document.getElementById('resultContent');
-        const submitButton = document.getElementById('submitButton');
-        const copyButton = document.getElementById('copyButton');
-
-        form.addEventListener('submit', async (e) => {
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
             e.preventDefault();
-            loading.classList.remove('hidden');
-            submitButton.disabled = true;
-
-            const formData = new FormData(form);
-            try {
-                const response = await fetch('/upload', {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                const data = await response.json();
-                if (data && data.url) {
-                    resultContent.textContent = data.url;
-                    resultDiv.classList.remove('hidden');
-                } else {
-                    resultContent.textContent = "URL not found in response.";
-                    resultDiv.classList.remove('hidden');
-                }
-            } catch (error) {
-                resultContent.textContent = `Error: ${error.message}`;
-                resultDiv.classList.remove('hidden');
-            } finally {
-                loading.classList.add('hidden');
-                submitButton.disabled = false;
-            }
-        });
-
-        copyButton.addEventListener('click', () => {
-            const url = resultContent.textContent;
-            if (url) {
-                navigator.clipboard.writeText(url)
-                    .then(() => {
-                        alert('URL copied to clipboard!');
-                    })
-                    .catch(err => {
-                        console.error('Could not copy text: ', err);
-                        alert('Could not copy URL.');
-                    });
+            const formData = new FormData(e.target);
+            const response = await fetch('/upload', {
+                method: 'POST',
+                body: formData
+            });
+            const result = await response.json();
+            if (result.url) {
+                document.getElementById('result').innerHTML = `File uploaded successfully: <a href="${result.url}" class="text-blue-500 underline" target="_blank">${result.url}</a>`;
             } else {
-                alert('No URL found in the result.');
+                document.getElementById('result').innerHTML = 'Upload failed.';
             }
         });
     </script>
 </body>
-
 </html>
