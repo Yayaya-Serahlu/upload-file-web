@@ -4,44 +4,35 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload File</title>
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <script>
-        function showLoading() {
-            document.getElementById('loading').classList.remove('hidden');
-        }
-
-        function handleUpload(event) {
-            event.preventDefault();
-            showLoading();
-            const form = document.getElementById('uploadForm');
-            const formData = new FormData(form);
-
-            fetch(form.action, {
-                method: form.method,
-                body: formData,
-            })
-            .then(response => response.json())
-            .then(data => {
-                document.getElementById('loading').classList.add('hidden');
-                window.open(data.url, '_blank');
-            })
-            .catch(error => {
-                document.getElementById('loading').classList.add('hidden');
-                console.error('Error:', error);
-            });
-        }
-    </script>
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center min-h-screen">
-    <div class="bg-white p-8 rounded shadow-md w-full max-w-md">
-        <h1 class="text-2xl font-bold mb-4">Upload File</h1>
-        <form id="uploadForm" action="/upload" method="post" encType="multipart/form-data" onsubmit="handleUpload(event)">
-            <input type="file" name="file" class="block w-full text-sm text-gray-500 border border-gray-300 rounded mb-4" />
-            <input type="submit" value="Upload File" name="submit" class="w-full bg-blue-500 text-white py-2 rounded hover:bg-blue-600 cursor-pointer" />
+<body class="bg-gray-100 flex items-center justify-center h-screen">
+    <div class="bg-white p-8 rounded shadow-md w-96">
+        <h1 class="text-2xl font-semibold mb-4">Upload File</h1>
+        <form ref="uploadForm" id="uploadForm" action="/upload" method="post" encType="multipart/form-data">
+            <input type="file" name="file" class="mb-4 block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-500 file:text-white hover:file:bg-indigo-700" />
+            <div class="flex justify-center">
+                <button type="submit" id="uploadButton" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
+                    Upload File
+                </button>
+                <div id="loadingIndicator" class="ml-2 hidden">
+                    <svg class="animate-spin h-5 w-5 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                    </svg>
+                </div>
+            </div>
         </form>
-        <div id="loading" class="hidden mt-4 text-center text-blue-500">
-            Loading...
-        </div>
     </div>
+    <script>
+        const uploadForm = document.getElementById('uploadForm');
+        const uploadButton = document.getElementById('uploadButton');
+        const loadingIndicator = document.getElementById('loadingIndicator');
+
+        uploadForm.addEventListener('submit', () => {
+            uploadButton.disabled = true;
+            loadingIndicator.classList.remove('hidden');
+        });
+    </script>
 </body>
 </html>
