@@ -35,7 +35,7 @@
         </form>
         <div id="result" class="mt-4 p-4 bg-gray-200 rounded hidden">
             <h2 class="text-lg font-semibold mb-2">Result:</h2>
-            <pre id="resultContent"></pre>
+            <div id="resultContent"></div>
             <button id="copyButton" class="mt-2 bg-gray-400 hover:bg-gray-500 text-white py-1 px-2 rounded">Copy URL</button>
         </div>
     </div>
@@ -61,8 +61,13 @@
                 });
 
                 const data = await response.json();
-                resultContent.textContent = JSON.stringify(data, null, 2);
-                resultDiv.classList.remove('hidden');
+                if (data && data.url) {
+                    resultContent.textContent = data.url;
+                    resultDiv.classList.remove('hidden');
+                } else {
+                    resultContent.textContent = "URL not found in response.";
+                    resultDiv.classList.remove('hidden');
+                }
             } catch (error) {
                 resultContent.textContent = `Error: ${error.message}`;
                 resultDiv.classList.remove('hidden');
@@ -73,9 +78,9 @@
         });
 
         copyButton.addEventListener('click', () => {
-            const data = JSON.parse(resultContent.textContent);
-            if (data && data.url) {
-                navigator.clipboard.writeText(data.url)
+            const url = resultContent.textContent;
+            if (url) {
+                navigator.clipboard.writeText(url)
                     .then(() => {
                         alert('URL copied to clipboard!');
                     })
