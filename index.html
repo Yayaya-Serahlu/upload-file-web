@@ -8,56 +8,56 @@
 </head>
 <body class="bg-gray-100 h-screen flex items-center justify-center">
     <div class="bg-white p-8 rounded shadow-md w-96">
-        <h1 class="text-2xl font-semibold mb-4 text-center">Upload File</h1>
-        <form ref="uploadForm" id="uploadForm" action="/upload" method="post" encType="multipart/form-data">
+        <h1 class="text-2xl font-semibold mb-4 text-center">Unggah File</h1>
+        <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
             <div class="mb-4">
-                <input type="file" name="file" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-500 file:text-white hover:file:bg-indigo-700" />
+                <input type="file" name="file" id="fileInput" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-500 file:text-white hover:file:bg-indigo-700" />
             </div>
-            <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700">Upload File</button>
+            <div class="mb-4">
+                <button type="submit" id="submitButton" class="w-full bg-indigo-500 text-white py-2 px-4 rounded hover:bg-indigo-700">Unggah File</button>
+            </div>
+            <div id="loading" class="hidden text-center">
+                <svg class="animate-spin h-5 w-5 mr-3 ..." viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+                Memuat...
+            </div>
+            <div id="result" class="hidden mt-4">
+                <label for="resultText" class="block text-sm font-medium text-gray-700">Hasil Unggahan:</label>
+                <div class="mt-1">
+                    <textarea id="resultText" rows="3" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border-gray-300 rounded-md" readonly></textarea>
+                </div>
+                <button id="copyButton" class="mt-2 bg-gray-300 text-gray-700 py-1 px-2 rounded hover:bg-gray-400">Salin</button>
+            </div>
         </form>
-        <div id="uploadResult" class="mt-4 hidden">
-            <p class="mb-2">URL File:</p>
-            <div class="flex items-center">
-                <input type="text" id="fileUrl" class="flex-grow border rounded py-2 px-3 mr-2 focus:outline-none focus:ring focus:border-indigo-300" readonly>
-                <button id="copyUrl" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">Copy</button>
-            </div>
-        </div>
     </div>
 
     <script>
         const uploadForm = document.getElementById('uploadForm');
-        const uploadResult = document.getElementById('uploadResult');
-        const fileUrlInput = document.getElementById('fileUrl');
-        const copyButton = document.getElementById('copyUrl');
+        const submitButton = document.getElementById('submitButton');
+        const loading = document.getElementById('loading');
+        const result = document.getElementById('result');
+        const resultText = document.getElementById('resultText');
+        const copyButton = document.getElementById('copyButton');
 
-        uploadForm.addEventListener('submit', async (event) => {
-            event.preventDefault();
+        uploadForm.addEventListener('submit', (event) => {
+            loading.classList.remove('hidden');
+            submitButton.disabled = true;
 
-            const formData = new FormData(uploadForm);
-
-            try {
-                const response = await fetch('/upload', {
-                    method: 'POST',
-                    body: formData,
-                });
-
-                if (response.ok) {
-                    const data = await response.json();
-                    fileUrlInput.value = data.url; // Asumsi server mengembalikan URL dalam format { url: "..." }
-                    uploadResult.classList.remove('hidden');
-                } else {
-                    alert('Upload gagal.');
-                }
-            } catch (error) {
-                console.error('Error:', error);
-                alert('Terjadi kesalahan.');
-            }
+            // Simulasi unggahan (ganti dengan logika unggahan sebenarnya)
+            setTimeout(() => {
+                loading.classList.add('hidden');
+                submitButton.disabled = false;
+                result.classList.remove('hidden');
+                resultText.value = "https://contoh.com/file-yang-diunggah.txt"; // Ganti dengan URL hasil unggahan
+            }, 2000);
         });
 
         copyButton.addEventListener('click', () => {
-            fileUrlInput.select();
+            resultText.select();
             document.execCommand('copy');
-            alert('URL berhasil disalin!');
+            alert('Teks disalin!');
         });
     </script>
 </body>
