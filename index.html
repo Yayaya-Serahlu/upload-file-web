@@ -9,45 +9,55 @@
 <body class="bg-gray-100 h-screen flex items-center justify-center">
     <div class="bg-white p-8 rounded shadow-md w-96">
         <h1 class="text-2xl font-semibold mb-4 text-center">Upload File</h1>
-        <form ref="uploadForm" id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+        <form ref="uploadForm" id="uploadForm" action="/upload" method="post" encType="multipart/form-data">
             <div class="mb-4">
-                <label class="block text-gray-700 text-sm font-bold mb-2" for="file">
-                    Pilih File
-                </label>
-                <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" id="file" type="file" name="file">
+                <input type="file" name="file" class="block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-500 file:text-white hover:file:bg-indigo-700" />
             </div>
-            <div class="flex items-center justify-center">
-                <input class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline" type="submit" value="Upload File" name="submit">
-            </div>
+            <button type="submit" class="w-full bg-indigo-600 text-white py-2 rounded hover:bg-indigo-700">Upload File</button>
         </form>
-
-        <div id="hasil-teks" class="mt-6 hidden">
-            <h2 class="text-lg font-semibold mb-2">Hasil Teks:</h2>
-            <div class="border rounded p-4 bg-gray-200 relative">
-                <pre id="teks-hasil" class="whitespace-pre-wrap"></pre>
-                <button id="salin-teks" class="absolute top-2 right-2 bg-green-500 hover:bg-green-700 text-white font-bold py-1 px-2 rounded text-sm">Salin</button>
+        <div id="uploadResult" class="mt-4 hidden">
+            <p class="mb-2">URL File:</p>
+            <div class="flex items-center">
+                <input type="text" id="fileUrl" class="flex-grow border rounded py-2 px-3 mr-2 focus:outline-none focus:ring focus:border-indigo-300" readonly>
+                <button id="copyUrl" class="bg-gray-300 hover:bg-gray-400 text-gray-800 font-semibold py-2 px-4 rounded">Copy</button>
             </div>
         </div>
     </div>
 
     <script>
-        // Contoh simulasi hasil teks (ganti dengan hasil dari server)
-        const hasilTeks = "Ini adalah contoh teks hasil upload file.";
+        const uploadForm = document.getElementById('uploadForm');
+        const uploadResult = document.getElementById('uploadResult');
+        const fileUrlInput = document.getElementById('fileUrl');
+        const copyButton = document.getElementById('copyUrl');
 
-        // Menampilkan hasil teks
-        const hasilTeksDiv = document.getElementById('hasil-teks');
-        const teksHasilPre = document.getElementById('teks-hasil');
-        teksHasilPre.textContent = hasilTeks;
-        hasilTeksDiv.classList.remove('hidden');
+        uploadForm.addEventListener('submit', async (event) => {
+            event.preventDefault();
 
-        // Fungsi untuk menyalin teks
-        document.getElementById('salin-teks').addEventListener('click', function() {
-            const teks = document.getElementById('teks-hasil').textContent;
-            navigator.clipboard.writeText(teks).then(() => {
-                alert('Teks berhasil disalin!');
-            }).catch(err => {
-                console.error('Gagal menyalin teks: ', err);
-            });
+            const formData = new FormData(uploadForm);
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const data = await response.json();
+                    fileUrlInput.value = data.url; // Asumsi server mengembalikan URL dalam format { url: "..." }
+                    uploadResult.classList.remove('hidden');
+                } else {
+                    alert('Upload gagal.');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Terjadi kesalahan.');
+            }
+        });
+
+        copyButton.addEventListener('click', () => {
+            fileUrlInput.select();
+            document.execCommand('copy');
+            alert('URL berhasil disalin!');
         });
     </script>
 </body>
