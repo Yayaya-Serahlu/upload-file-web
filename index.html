@@ -4,77 +4,68 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload File</title>
-    <!-- Link ke Tailwind CSS -->
+    <!-- Menambahkan link ke Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <style>
-        /* Menyembunyikan indikator loading saat tidak digunakan */
-        #loading {
-            display: none;
-        }
-    </style>
 </head>
-<body class="bg-gray-100 text-gray-800 flex items-center justify-center h-screen">
+<body class="bg-gray-100 p-10">
+    <h1 class="text-3xl font-bold mb-6 text-center">Upload File</h1>
 
-    <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
-        <h1 class="text-2xl font-semibold mb-4 text-center">Upload File</h1>
-        
+    <div class="max-w-4xl mx-auto bg-white p-8 rounded-lg shadow-md">
         <form ref="uploadForm" id="uploadForm" action="/upload" method="post" encType="multipart/form-data" class="space-y-4">
-            <!-- Input File -->
-            <input type="file" name="file" class="w-full p-2 border border-gray-300 rounded-md" />
-            
-            <!-- Tombol Upload -->
-            <input type="submit" value="Upload File" name="submit" class="w-full bg-blue-500 text-white p-2 rounded-md cursor-pointer hover:bg-blue-600" />
+            <!-- Input file -->
+            <div class="flex flex-col">
+                <label for="file" class="font-semibold">Select File</label>
+                <input type="file" name="file" id="file" class="p-2 border border-gray-300 rounded-lg">
+            </div>
+
+            <!-- Tombol upload -->
+            <div class="flex items-center space-x-2">
+                <input type="submit" value="Upload File" name="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 cursor-pointer">
+                <!-- Loading Spinner -->
+                <div id="loadingSpinner" class="hidden">
+                    <svg class="animate-spin h-5 w-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 1 1 16 0 8 8 0 0 1-16 0z"></path>
+                    </svg>
+                    <span class="ml-2">Uploading...</span>
+                </div>
+            </div>
         </form>
-        
-        <!-- Indikator Loading -->
-        <div id="loading" class="text-center mt-4">
-            <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-solid"></div>
-            <p class="mt-2">Uploading...</p>
-        </div>
-        
-        <!-- Tempat untuk menampilkan URL setelah upload -->
-        <div id="resultUrl" class="mt-4 text-center hidden">
-            <p>File uploaded successfully!</p>
-            <a id="fileUrl" href="#" target="_blank" class="text-blue-500 underline">Open File</a>
-        </div>
+    </div>
+
+    <!-- Tempat menampilkan hasil upload -->
+    <div id="result" class="mt-6 p-4 bg-gray-50 border border-gray-300 rounded-lg w-full">
+        <h2 class="text-xl font-semibold">Upload Result</h2>
+        <p id="resultMessage">Menunggu file untuk di-upload...</p>
     </div>
 
     <script>
+        // Mendapatkan elemen form dan spinner
         const form = document.getElementById("uploadForm");
-        const loading = document.getElementById("loading");
-        const resultUrl = document.getElementById("resultUrl");
-        const fileUrl = document.getElementById("fileUrl");
+        const loadingSpinner = document.getElementById("loadingSpinner");
+        const resultMessage = document.getElementById("resultMessage");
 
+        // Ketika form disubmit, tampilkan spinner dan sembunyikan pesan hasil
         form.addEventListener("submit", function(e) {
-            e.preventDefault();
-            
-            // Tampilkan indikator loading
-            loading.style.display = "block";
+            e.preventDefault(); // Mencegah form submit secara default
+            loadingSpinner.classList.remove("hidden"); // Tampilkan spinner
+            resultMessage.textContent = "Uploading your file..."; // Update status
 
             const formData = new FormData(form);
-            
-            // Menggunakan Fetch API untuk mengirim file secara asynchronous
-            fetch('/upload', {
-                method: 'POST',
+            fetch(form.action, {
+                method: "POST",
                 body: formData
             })
-            .then(response => response.json()) // Mengasumsikan server mengembalikan JSON dengan URL hasil upload
+            .then(response => response.json())
             .then(data => {
-                // Sembunyikan indikator loading
-                loading.style.display = "none";
-                
-                // Tampilkan URL hasil upload
-                resultUrl.style.display = "block";
-                fileUrl.href = data.url; // URL hasil upload
-                fileUrl.textContent = "Click to open your uploaded file"; // Teks link
+                loadingSpinner.classList.add("hidden"); // Sembunyikan spinner
+                resultMessage.textContent = `Upload sukses! File Anda: ${data.fileName}`; // Tampilkan hasil upload
             })
             .catch(error => {
-                // Menyembunyikan loading jika terjadi error
-                loading.style.display = "none";
-                alert("Error uploading file.");
+                loadingSpinner.classList.add("hidden"); // Sembunyikan spinner
+                resultMessage.textContent = "Upload gagal. Coba lagi."; // Tampilkan pesan error
             });
         });
     </script>
-
 </body>
 </html>
