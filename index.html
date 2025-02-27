@@ -24,10 +24,9 @@
                 Memuat...
             </div>
             <div id="result" class="hidden mt-4">
-                <label for="resultUrl" class="block text-sm font-medium text-gray-700">URL Hasil Unggahan:</label>
-                <div class="mt-1">
-                    <input type="text" id="resultUrl" class="shadow-sm focus:ring-indigo-500 focus:border-indigo-500 mt-1 block w-full sm:text-sm border-gray-300 rounded-md" readonly>
-                </div>
+                <label for="resultDisplay" class="block text-sm font-medium text-gray-700">Hasil:</label>
+                <div id="resultDisplay" class="mt-1 p-4 border rounded-md bg-gray-50">
+                    </div>
             </div>
         </form>
     </div>
@@ -37,19 +36,36 @@
         const submitButton = document.getElementById('submitButton');
         const loading = document.getElementById('loading');
         const result = document.getElementById('result');
-        const resultUrl = document.getElementById('resultUrl');
+        const resultDisplay = document.getElementById('resultDisplay');
 
-        uploadForm.addEventListener('submit', (event) => {
+        uploadForm.addEventListener('submit', async (event) => {
+            event.preventDefault(); // Mencegah pengiriman formulir standar
             loading.classList.remove('hidden');
             submitButton.disabled = true;
 
-            // Simulasi unggahan (ganti dengan logika unggahan sebenarnya)
-            setTimeout(() => {
+            const formData = new FormData(uploadForm);
+
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
+
+                if (response.ok) {
+                    const data = await response.text(); // Mengambil hasil res.send sebagai teks
+                    resultDisplay.innerHTML = `<p>${data}</p>`; // Menampilkan hasil di resultDisplay
+                    result.classList.remove('hidden');
+                } else {
+                    resultDisplay.innerHTML = `<p>Terjadi kesalahan: ${response.statusText}</p>`;
+                    result.classList.remove('hidden');
+                }
+            } catch (error) {
+                resultDisplay.innerHTML = `<p>Terjadi kesalahan: ${error.message}</p>`;
+                result.classList.remove('hidden');
+            } finally {
                 loading.classList.add('hidden');
                 submitButton.disabled = false;
-                result.classList.remove('hidden');
-                resultUrl.value = "https://contoh.com/file-yang-diunggah.txt"; // Ganti dengan URL hasil unggahan sebenarnya
-            }, 2000);
+            }
         });
     </script>
 </body>
