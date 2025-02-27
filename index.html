@@ -1,55 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload File</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100">
-    <div class="container mx-auto p-8">
-        <h1 class="text-3xl font-bold mb-4">Upload File</h1>
-        <form ref="uploadForm" id="uploadForm" action="/upload" method="post" enctype="multipart/form-data" class="mb-4">
-            <input type="file" name="file" class="mb-2 p-2 border rounded" />
-            <button type="submit" name="submit" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">Upload File</button>
+
+<body class="bg-gray-100 h-screen flex items-center justify-center">
+    <div class="bg-white p-8 rounded shadow-md w-96">
+        <h1 class="text-2xl font-semibold mb-4 text-center">Upload File</h1>
+        <form id="uploadForm" action="/upload" method="post" enctype="multipart/form-data">
+            <div class="mb-4">
+                <input type="file" name="file" id="fileInput" class="block w-full text-sm text-slate-500
+      file:mr-4 file:py-2 file:px-4
+      file:rounded-full file:border-0
+      file:text-sm file:font-semibold
+      file:bg-blue-500 file:text-white
+      hover:file:bg-blue-700" />
+            </div>
+            <button type="submit" id="submitButton"
+                class="w-full bg-blue-500 text-white p-2 rounded hover:bg-blue-700">Upload File</button>
+            <div id="loading" class="hidden mt-2 text-center">
+                <svg class="animate-spin h-5 w-5 mr-3 inline-block" xmlns="http://www.w3.org/2000/svg" fill="none"
+                    viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                </svg>
+                Loading...
+            </div>
         </form>
-        <div id="loading" class="hidden items-center justify-center mb-4">
-            <div class="animate-spin rounded-full h-8 w-8 border-t-2 border-b-2 border-blue-500"></div>
-            <span class="ml-2">Uploading...</span>
-        </div>
-        <div id="result" class="mt-4 p-4 border rounded">
-            <p id="resultText">Hasil akan muncul di sini...</p>
+        <div id="result" class="mt-4 p-4 bg-gray-200 rounded hidden">
+            <h2 class="text-lg font-semibold mb-2">Result:</h2>
+            <pre id="resultContent"></pre>
         </div>
     </div>
 
     <script>
-        const uploadForm = document.getElementById('uploadForm');
-        const loadingDiv = document.getElementById('loading');
+        const form = document.getElementById('uploadForm');
+        const loading = document.getElementById('loading');
         const resultDiv = document.getElementById('result');
-        const resultText = document.getElementById('resultText');
+        const resultContent = document.getElementById('resultContent');
+        const submitButton = document.getElementById('submitButton');
 
-        uploadForm.addEventListener('submit', (event) => {
-            loadingDiv.classList.remove('hidden');
-            resultDiv.classList.add('hidden');
+        form.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            loading.classList.remove('hidden');
+            submitButton.disabled = true;
 
-            const formData = new FormData(uploadForm);
+            const formData = new FormData(form);
+            try {
+                const response = await fetch('/upload', {
+                    method: 'POST',
+                    body: formData,
+                });
 
-            fetch('/upload', {
-                method: 'POST',
-                body: formData,
-            })
-            .then(response => response.text()) // Mengambil response sebagai teks
-            .then(data => {
-                loadingDiv.classList.add('hidden');
+                const data = await response.json();
+                resultContent.textContent = JSON.stringify(data, null, 2);
                 resultDiv.classList.remove('hidden');
-                resultText.textContent = data; // Menampilkan hasil dari res.send
-            })
-            .catch(error => {
-                loadingDiv.classList.add('hidden');
+            } catch (error) {
+                resultContent.textContent = `Error: ${error.message}`;
                 resultDiv.classList.remove('hidden');
-                resultText.textContent = 'Terjadi kesalahan: ' + error;
-            });
+            } finally {
+                loading.classList.add('hidden');
+                submitButton.disabled = false;
+            }
         });
     </script>
 </body>
+
 </html>
