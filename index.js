@@ -46,11 +46,11 @@ app.post('/upload', async (req, res) => {
     });
 
     let rawUrl = `https://aplotpelrapikzyeah.vercel.app/${filePath}`;
-   res.json({ url: rawUrl });
-    } catch (error) {
-        console.error('Error uploading file:', error);
-        res.status(500).json({ error: 'Error uploading file.', details: error.message });
-    }
+   res.send(`${rawUrl}`);
+  } catch (error) {
+    console.error(error);
+    res.status(500).send('Error uploading file.');
+  }
 });
 
 app.listen(port, () => {
