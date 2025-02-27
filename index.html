@@ -4,75 +4,77 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload File</title>
+    <!-- Link ke Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Menyembunyikan indikator loading saat tidak digunakan */
+        #loading {
+            display: none;
+        }
+    </style>
 </head>
-<body class="bg-gray-100 flex items-center justify-center h-screen">
-    <div class="bg-white p-8 rounded-lg shadow-lg w-full max-w-md">
-        <h1 class="text-2xl font-bold mb-6 text-center">Upload File</h1>
+<body class="bg-gray-100 text-gray-800 flex items-center justify-center h-screen">
+
+    <div class="w-full max-w-md p-6 bg-white rounded-lg shadow-md">
+        <h1 class="text-2xl font-semibold mb-4 text-center">Upload File</h1>
+        
         <form ref="uploadForm" id="uploadForm" action="/upload" method="post" encType="multipart/form-data" class="space-y-4">
-            <div>
-                <input type="file" name="file" class="w-full p-2 border border-gray-300 rounded-lg" />
-            </div>
-            <div>
-                <button type="submit" class="w-full bg-blue-500 text-white p-2 rounded-lg hover:bg-blue-600 transition duration-200">
-                    <span id="submitText">Upload File</span>
-                    <span id="loadingSpinner" class="hidden">
-                        <svg class="animate-spin h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                        </svg>
-                    </span>
-                </button>
-            </div>
+            <!-- Input File -->
+            <input type="file" name="file" class="w-full p-2 border border-gray-300 rounded-md" />
+            
+            <!-- Tombol Upload -->
+            <input type="submit" value="Upload File" name="submit" class="w-full bg-blue-500 text-white p-2 rounded-md cursor-pointer hover:bg-blue-600" />
         </form>
-        <div id="resultUrl" class="mt-6 text-center hidden">
-            <p class="text-gray-700">File uploaded successfully! Here is your URL:</p>
-            <a id="fileUrl" href="#" class="text-blue-500 underline break-all" target="_blank"></a>
+        
+        <!-- Indikator Loading -->
+        <div id="loading" class="text-center mt-4">
+            <div class="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500 border-solid"></div>
+            <p class="mt-2">Uploading...</p>
+        </div>
+        
+        <!-- Tempat untuk menampilkan URL setelah upload -->
+        <div id="resultUrl" class="mt-4 text-center hidden">
+            <p>File uploaded successfully!</p>
+            <a id="fileUrl" href="#" target="_blank" class="text-blue-500 underline">Open File</a>
         </div>
     </div>
 
     <script>
-        document.getElementById('uploadForm').addEventListener('submit', function(event) {
-            event.preventDefault();
+        const form = document.getElementById("uploadForm");
+        const loading = document.getElementById("loading");
+        const resultUrl = document.getElementById("resultUrl");
+        const fileUrl = document.getElementById("fileUrl");
+
+        form.addEventListener("submit", function(e) {
+            e.preventDefault();
             
-            const submitButton = document.querySelector('button[type="submit"]');
-            const submitText = document.getElementById('submitText');
-            const loadingSpinner = document.getElementById('loadingSpinner');
-            const resultUrlDiv = document.getElementById('resultUrl');
-            const fileUrlLink = document.getElementById('fileUrl');
+            // Tampilkan indikator loading
+            loading.style.display = "block";
 
-            submitText.classList.add('hidden');
-            loadingSpinner.classList.remove('hidden');
-            submitButton.disabled = true;
-
-            const formData = new FormData(this);
-
+            const formData = new FormData(form);
+            
+            // Menggunakan Fetch API untuk mengirim file secara asynchronous
             fetch('/upload', {
                 method: 'POST',
                 body: formData
             })
-            .then(response => response.json())
+            .then(response => response.json()) // Mengasumsikan server mengembalikan JSON dengan URL hasil upload
             .then(data => {
-                submitText.classList.remove('hidden');
-                loadingSpinner.classList.add('hidden');
-                submitButton.disabled = false;
-
-                if (data.url) {
-                    fileUrlLink.href = data.url;
-                    fileUrlLink.textContent = data.url;
-                    resultUrlDiv.classList.remove('hidden');
-                } else {
-                    alert('Upload failed. Please try again.');
-                }
+                // Sembunyikan indikator loading
+                loading.style.display = "none";
+                
+                // Tampilkan URL hasil upload
+                resultUrl.style.display = "block";
+                fileUrl.href = data.url; // URL hasil upload
+                fileUrl.textContent = "Click to open your uploaded file"; // Teks link
             })
             .catch(error => {
-                console.error('Error:', error);
-                submitText.classList.remove('hidden');
-                loadingSpinner.classList.add('hidden');
-                submitButton.disabled = false;
-                alert('Upload failed. Please try again.');
+                // Menyembunyikan loading jika terjadi error
+                loading.style.display = "none";
+                alert("Error uploading file.");
             });
         });
     </script>
+
 </body>
 </html>
