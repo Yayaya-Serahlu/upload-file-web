@@ -45,7 +45,7 @@ app.post('/upload', async (req, res) => {
       },
     });
 
-    let rawUrl = `https://aplotpelrapikzyeah.vercel.app/${filePath}`;
+    let rawUrl = `https://www.aplotpelrapikz.my.id/${filePath}`;
    res.send(`This file has been successfully uploaded, url: ${rawUrl}`);
   } catch (error) {
     console.error(error);
