@@ -6,17 +6,13 @@
     <title>Upload File</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 flex items-center justify-center h-screen">
-    <div class="bg-white p-8 rounded shadow-md w-96">
-        <h1 class="text-2xl font-semibold mb-4">Upload File</h1>
-        <form ref="uploadForm" id="uploadForm" action="/upload" method="post" encType="multipart/form-data">
-            <input type="file" name="file" class="mb-4 block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-500 file:text-white hover:file:bg-indigo-700" />
-            <div class="flex justify-center">
-                <button type="submit" id="uploadButton" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
-                    Upload File
+<body class="bg-white flex items-center justify-center h-screen">
+    <div class="bg-white p-12 rounded shadow-md w-3/4 max-w-2xl"> <h1 class="text-3xl font-semibold mb-6 text-center">Upload File</h1> <form id="uploadForm" action="/upload" method="post" encType="multipart/form-data">
+            <input type="file" name="file" class="mb-6 block w-full text-sm text-slate-500 file:mr-4 file:py-3 file:px-6 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-500 file:text-white hover:file:bg-indigo-700" /> <div class="flex justify-center">
+                <button type="submit" id="uploadButton" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded text-lg"> Upload File
                 </button>
                 <div id="loadingIndicator" class="ml-2 hidden">
-                    <svg class="animate-spin h-5 w-5 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                    <svg class="animate-spin h-6 w-6 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                         <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                         <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                     </svg>
