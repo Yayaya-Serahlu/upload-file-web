@@ -52,7 +52,7 @@ app.post('/upload', async (req, res) => {
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Unggahan Berhasil</title>
+  <title>Upload Succes</title>
   <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
 </head>
 <body class="bg-gray-100">
@@ -67,22 +67,8 @@ app.post('/upload', async (req, res) => {
       <div class="text-center">
         <a id="rawUrlLink" href="${rawUrl}" class="text-blue-500 hover:text-blue-700">${rawUrl}</a>
       </div>
-      <div class="text-center mt-4">
-        <button onclick="copyUrl()" class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">Salin URL</button>
-      </div>
     </div>
   </div>
-
-  <script>
-    function copyUrl() {
-      const rawUrl = document.getElementById('rawUrlLink').href;
-      navigator.clipboard.writeText(rawUrl).then(function() {
-        alert("URL berhasil disalin: " + rawUrl);
-      }).catch(function(error) {
-        alert("Gagal menyalin URL: " + error);
-      });
-    }
-  </script>
 </body>
 </html>
    `);
