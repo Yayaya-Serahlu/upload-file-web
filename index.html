@@ -1,51 +1,161 @@
 <!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload File GH</title>
-    <script src="https://cdn.tailwindcss.com"></script>
-    <link rel="icon" type="image/x-icon" href="https://i.pinimg.com/736x/0d/71/2a/0d712a0b6805c0b44386339048bdfce5.jpg?format=png&name=900x900">
-</head>
-<body class="bg-gray-100 flex flex-col items-center justify-center h-screen">
-    <p align="center">
-        <img src="https://media.tenor.com/yWaLIc5J9WgAAAAj/momoi.gif" width="100%" height="100%" />
-    </p>
-    <div class="bg-white p-8 rounded shadow-md w-96">
-        <h1 class="text-2xl font-semibold mb-4">Upload file yang lebih kecil dari 4.5 MB</h1>
-        <form ref="uploadForm" id="uploadForm" action="/upload" method="post" encType="multipart/form-data">
-            <input type="file" name="file" class="mb-4 block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-indigo-500 file:text-white hover:file:bg-indigo-700" />
-            <div class="flex justify-center">
-                <button type="submit" id="uploadButton" class="bg-indigo-500 hover:bg-indigo-700 text-white font-bold py-2 px-4 rounded">
-                    Upload File
-                </button>
-                <div id="loadingIndicator" class="ml-2 hidden">
-                    <svg class="animate-spin h-5 w-5 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                        <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
-                        <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                    </svg>
-                </div>
-            </div>
-        </form>
-    </div>
-    <script>
-        const uploadForm = document.getElementById('uploadForm');
-        const uploadButton = document.getElementById('uploadButton');
-        const loadingIndicator = document.getElementById('loadingIndicator');
+ <html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload File GH</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="icon" type="image/x-icon" href="https://i.pinimg.com/736x/0d/71/2a/0d712a0b6805c0b44386339048bdfce5.jpg?format=png&name=900x900">
+  <style>
+  body {
+  background-color: #f3f4f6;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh; /* Menggunakan min-height agar konten tetap di tengah meskipun sedikit */
+  margin: 0; /* Menghilangkan margin body default */
+  }
 
-        uploadForm.addEventListener('submit', () => {
-            uploadButton.disabled = true;
-            loadingIndicator.classList.remove('hidden');
-        });
-    </script>
-    <p align="center">
-      <img src="https://raw.githubusercontent.com/upload-file-lab/fileupload/main/uploads/1744380557588.png" width="50%" height="50%" />
-    </p>
-    <p align="center">
-    <a href="https://github.com/Rapikz-kwontwol/web-uploadfile-to-github"><img title="Author"
-        src="https://img.shields.io/badge/GITHUB-gray.svg?style=for-the-badge&logo=github"
-        alt="GitHub"></a>
-        </p>
-    <center><audio autoplay="autoplay" controls="controls" src="https://files.catbox.moe/ar2c1c.mp3"></audio></a></center>
-</body>
-</html>
+  .container {
+  background-color: white;
+  padding: 2rem;
+  border-radius: 0.5rem;
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+  width: 90%; /* Membuat container lebih responsif */
+  max-width: 480px; /* Batas lebar maksimum container */
+  }
+
+  .title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  margin-bottom: 1rem;
+  text-align: center;
+  }
+
+  .file-input {
+  margin-bottom: 1rem;
+  display: block;
+  width: 100%;
+  text-sm;
+  color: #4b5563;
+  }
+
+  .file-input::-webkit-file-upload-button {
+  margin-right: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  border: none;
+  font-weight: 600;
+  background-color: #6366f1;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  }
+
+  .file-input::file-selector-button {
+  margin-right: 1rem;
+  padding: 0.5rem 1rem;
+  border-radius: 9999px;
+  border: none;
+  font-weight: 600;
+  background-color: #6366f1;
+  color: white;
+  cursor: pointer;
+  transition: background-color 0.2s ease-in-out;
+  }
+
+  .file-input::-webkit-file-upload-button:hover {
+  background-color: #4f46e5;
+  }
+
+  .file-input::file-selector-button:hover {
+  background-color: #4f46e5;
+  }
+
+  .upload-button-container {
+  display: flex;
+  justify-content: center;
+  }
+
+  .upload-button {
+  background-color: #6366f1;
+  color: white;
+  font-weight: bold;
+  padding: 0.5rem 1rem;
+  border-radius: 0.25rem;
+  transition: background-color 0.2s ease-in-out;
+  border: none;
+  cursor: pointer;
+  }
+
+  .upload-button:hover {
+  background-color: #4f46e5;
+  }
+
+  .loading-indicator {
+  margin-left: 0.5rem;
+  display: none;
+  }
+
+  .gif-container {
+  text-align: center;
+  margin-bottom: 1rem;
+  }
+
+  .gif {
+  max-width: 100%;
+  height: auto;
+  }
+
+  .link-container {
+  text-align: center;
+  margin-top: 1rem;
+  }
+  </style>
+ </head>
+ <body>
+  <div class="gif-container">
+  <img src="https://media.tenor.com/yWaLIc5J9WgAAAAj/momoi.gif" alt="GIF Animasi" class="gif" />
+  </div>
+  <div class="container">
+  <h1 class="title">Upload file yang lebih kecil dari 4.5 MB</h1>
+  <form ref="uploadForm" id="uploadForm" action="/upload" method="post" encType="multipart/form-data">
+  <input type="file" name="file" class="file-input" />
+  <div class="upload-button-container">
+  <button type="submit" id="uploadButton" class="upload-button">
+  Upload File
+  </button>
+  <div id="loadingIndicator" class="loading-indicator">
+  <svg class="animate-spin h-5 w-5 text-indigo-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+  <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+  <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+  </svg>
+  </div>
+  </div>
+  </form>
+  </div>
+  <div class="link-container">
+  <img src="https://raw.githubusercontent.com/upload-file-lab/fileupload/main/uploads/1744380557588.png" alt="Screenshot" width="50%" height="auto" style="max-width: 50%; height: auto; display: block; margin: 0 auto 1rem;" />
+  <a href="https://github.com/Rapikz-kwontwol/web-uploadfile-to-github"><img title="Author"
+  src="https://img.shields.io/badge/GITHUB-gray.svg?style=for-the-badge&logo=github"
+  alt="GitHub"></a>
+  </div>
+
+  <audio id="backgroundMusic" autoplay loop>
+  <source src="https://files.catbox.moe/ar2c1c.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+  </audio>
+
+  <script>
+  const uploadForm = document.getElementById('uploadForm');
+  const uploadButton = document.getElementById('uploadButton');
+  const loadingIndicator = document.getElementById('loadingIndicator');
+
+  uploadForm.addEventListener('submit', () => {
+  uploadButton.disabled = true;
+  loadingIndicator.classList.remove('hidden');
+  });
+  </script>
+ </body>
+ </html>
