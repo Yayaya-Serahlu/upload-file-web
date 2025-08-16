@@ -93,6 +93,14 @@ app.post('/uploadfile', async (req, res) => {
                 Salin URL
             </button>
         </div>
+        <a href="/" 
+               class="w-full relative px-8 py-4 glass hover:bg-white/40 text-gray-800 font-bold text-lg rounded-2xl shadow-xl hover:shadow-2xl transform hover:scale-105 transition-all duration-300 ease-out focus:outline-none focus:ring-4 focus:ring-gray-300/50 flex items-center justify-center group border border-white/30">
+                <svg class="w-6 h-6 mr-3 group-hover:-translate-x-1 transition-transform duration-300" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                </svg>
+                <span class="relative z-10">🔙 Back to Home</span>
+                <div class="absolute inset-0 rounded-2xl bg-gradient-to-r from-white/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+            </a>
     </div>
 
     <script>
